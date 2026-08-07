@@ -9,26 +9,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Modern Color Palette */
-            --primary: #4f46e5;       /* Indigo 600 */
-            --primary-hover: #4338ca; /* Indigo 700 */
-            --success: #10b981;       /* Emerald 500 */
-            --success-hover: #059669; /* Emerald 600 */
-            --danger: #ef4444;        /* Red 500 */
-            --danger-hover: #dc2626;  /* Red 600 */
+            --primary: #4f46e5;       
+            --primary-hover: #4338ca; 
+            --success: #10b981;       
+            --success-hover: #059669; 
+            --warning: #f59e0b;
+            --warning-hover: #d97706;
+            --danger: #ef4444;        
+            --danger-hover: #dc2626;  
             
-            --bg-color: #f8fafc;      /* Slate 50 */
+            --bg-color: #f8fafc;      
             --card-bg: #ffffff;
-            --text-main: #0f172a;     /* Slate 900 */
-            --text-muted: #64748b;    /* Slate 500 */
-            --border: #e2e8f0;        /* Slate 200 */
+            --text-main: #0f172a;     
+            --text-muted: #64748b;    
+            --border: #e2e8f0;        
             
-            /* Spacing & Radii */
             --radius-lg: 1rem;
             --radius-md: 0.75rem;
             --radius-sm: 0.5rem;
             
-            /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-focus: 0 0 0 3px rgba(79, 70, 229, 0.2);
@@ -76,9 +75,9 @@
             border: 1px solid var(--border);
             overflow-x: auto;
             gap: 5px;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none; 
         }
-        .tabs::-webkit-scrollbar { display: none; } /* Chrome */
+        .tabs::-webkit-scrollbar { display: none; } 
 
         .tab-btn {
             flex: 1;
@@ -95,15 +94,8 @@
             transition: var(--transition);
         }
 
-        .tab-btn:hover {
-            color: var(--text-main);
-            background: var(--bg-color);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            background: rgba(79, 70, 229, 0.1);
-        }
+        .tab-btn:hover { color: var(--text-main); background: var(--bg-color); }
+        .tab-btn.active { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
 
         /* Main Container & Sheets */
         .container {
@@ -128,9 +120,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .sheet.active {
-            display: block;
-        }
+        .sheet.active { display: block; }
 
         h2 {
             margin-top: 0;
@@ -144,13 +134,11 @@
         h3 {
             font-size: 1.1rem;
             color: var(--text-main);
-            margin-bottom: 12px;
+            margin: 0;
         }
 
         /* Form Elements */
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         label {
             display: block;
@@ -198,61 +186,49 @@
             gap: 8px;
         }
 
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-
+        button:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
         .btn-success { background-color: var(--success); }
         .btn-success:hover { background-color: var(--success-hover); }
-        
+        .btn-warning { background-color: var(--warning); color: white; }
+        .btn-warning:hover { background-color: var(--warning-hover); }
         .btn-danger { background-color: var(--danger); }
         .btn-danger:hover { background-color: var(--danger-hover); }
-        
-        .btn-small { 
-            padding: 6px 12px; 
-            font-size: 0.85rem; 
-            border-radius: var(--radius-sm);
-        }
+        .btn-small { padding: 6px 10px; font-size: 0.8rem; border-radius: var(--radius-sm); margin-left: 5px; }
 
         /* Sheet 1 Specifics */
         .attendance-wrapper {
             background: var(--bg-color);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 10px;
+            padding: 15px;
             max-height: 400px;
             overflow-y: auto;
+            /* Side-by-Side Grid */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
         }
 
         .member-list-item {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            padding: 12px 14px;
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            margin-bottom: 8px;
             transition: var(--transition);
         }
         
-        .member-list-item:last-child {
-            margin-bottom: 0;
-        }
-
         .member-list-item:hover {
             border-color: var(--primary);
             box-shadow: var(--shadow-sm);
         }
 
         .member-list-item input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
             margin-bottom: 0;
             accent-color: var(--primary);
             cursor: pointer;
@@ -260,7 +236,7 @@
         
         .member-list-item label {
             margin: 0;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             width: 100%;
         }
@@ -277,29 +253,36 @@
             margin: 20px 0;
         }
 
-        .large-count {
-            font-size: 4rem;
-            color: var(--primary);
-            font-weight: 700;
-            line-height: 1;
-        }
-        
-        .count-label {
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-top: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-        }
+        .large-count { font-size: 4rem; color: var(--primary); font-weight: 700; line-height: 1; }
+        .count-label { color: var(--text-muted); font-weight: 500; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; }
 
-        /* Settings List Rows */
+        /* Settings List Rows & Collapse */
         .settings-section {
             background: var(--bg-color);
-            padding: 20px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
             margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--card-bg);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .section-header:hover { background: #f1f5f9; }
+        
+        .chevron { transition: transform 0.3s ease; color: var(--text-muted); }
+        .chevron.up { transform: rotate(180deg); }
+        
+        .section-content {
+            padding: 20px;
+            border-top: 1px solid var(--border);
         }
 
         .list-row {
@@ -313,9 +296,10 @@
             margin-bottom: 8px;
             box-shadow: var(--shadow-sm);
         }
-        
         .list-row b { color: var(--text-main); font-weight: 600; }
         .list-row small { color: var(--text-muted); }
+        
+        .action-btns { display: flex; }
 
         .input-group {
             display: grid;
@@ -332,62 +316,27 @@
             border: 1px solid var(--border);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            white-space: nowrap;
-        }
-
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background-color: var(--bg-color);
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background-color: var(--bg-color);
-        }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background-color: var(--bg-color); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background-color: var(--bg-color); }
 
         .summary-box {
             background: var(--bg-color);
             padding: 20px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
-            margin-top: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        .summary-total { font-size: 1.5rem; font-weight: 700; color: var(--success); }
 
-        .summary-total {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .input-group {
-                grid-template-columns: 1fr;
-            }
-            .summary-box {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
+            .input-group { grid-template-columns: 1fr; }
+            .summary-box { flex-direction: column; gap: 15px; text-align: center; }
+            .attendance-wrapper { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -430,7 +379,7 @@
                 <div class="count-label">Members Present</div>
             </div>
 
-            <h3>Select Present Members</h3>
+            <h3 style="margin-bottom:12px;">Select Present Members</h3>
             <div class="attendance-wrapper" id="attendance-list">
                 <!-- Checkboxes injected here -->
             </div>
@@ -443,20 +392,40 @@
 
         <!-- SHEET 2: Food Selection -->
         <div id="sheet2" class="sheet">
-            <h2>Select Food for Members</h2>
-            <div id="food-selection-list">
-                <!-- Dropdowns injected here -->
-            </div>
-            
-            <div class="summary-box">
+            <h2>Food Distribution</h2>
+
+            <div class="summary-box" style="margin-bottom: 24px;">
                 <div>
-                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Total</div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase;">Members</div>
+                    <div class="summary-total" id="sheet2-pax" style="color: var(--primary);">0</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase;">Total Amt.</div>
                     <div class="summary-total">₹<span id="estimated-total">0</span></div>
                 </div>
-                <button class="btn-success" onclick="saveEvent()" style="padding: 14px 24px;">
+                <button class="btn-success" onclick="saveEvent()" style="padding: 12px 20px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                    Save Event
+                    Save
                 </button>
+            </div>
+            
+            <div class="form-group">
+                <label>Food Selection Mode</label>
+                <select id="food-mode" onchange="toggleFoodMode()">
+                    <option value="same">Same for all</option>
+                    <option value="separate">Separate</option>
+                </select>
+            </div>
+
+            <div id="same-food-container">
+                <div class="form-group" style="background: var(--bg-color); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    <label style="color: var(--primary); font-weight: 600;">Select Food for Everyone</label>
+                    <select id="food-for-all" onchange="updateEstimatedTotal()"></select>
+                </div>
+            </div>
+
+            <div id="food-selection-list" style="display: none;">
+                <!-- Dropdowns injected here -->
             </div>
         </div>
 
@@ -466,34 +435,49 @@
 
             <!-- Members Settings -->
             <div class="settings-section">
-                <h3>Members</h3>
-                <div class="input-group">
-                    <input type="text" id="new-member-name" placeholder="Member Name">
-                    <input type="date" id="new-member-dob" title="Birthday">
-                    <button onclick="addMember()">Add</button>
+                <div class="section-header" onclick="toggleSection('members-content', this)">
+                    <h3>Members</h3>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div id="settings-members-list"></div>
+                <div id="members-content" class="section-content">
+                    <div class="input-group">
+                        <input type="text" id="new-member-name" placeholder="Member Name">
+                        <input type="date" id="new-member-dob" title="Birthday">
+                        <button id="add-member-btn" onclick="addMember()">Add</button>
+                    </div>
+                    <div id="settings-members-list"></div>
+                </div>
             </div>
 
             <!-- Food Items Settings -->
             <div class="settings-section">
-                <h3>Food Items</h3>
-                <div class="input-group">
-                    <input type="text" id="new-food-name" placeholder="Food Item">
-                    <input type="number" id="new-food-rate" placeholder="Rate (₹)">
-                    <button onclick="addFood()">Add</button>
+                <div class="section-header" onclick="toggleSection('food-content', this)">
+                    <h3>Food Items</h3>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div id="settings-food-list"></div>
+                <div id="food-content" class="section-content">
+                    <div class="input-group">
+                        <input type="text" id="new-food-name" placeholder="Food Item">
+                        <input type="number" id="new-food-rate" placeholder="Rate (₹)">
+                        <button onclick="addFood()">Add</button>
+                    </div>
+                    <div id="settings-food-list"></div>
+                </div>
             </div>
 
             <!-- Treat Types Settings -->
             <div class="settings-section">
-                <h3>Treat Types</h3>
-                <div class="input-group" style="grid-template-columns: 1fr auto;">
-                    <input type="text" id="new-treat-type" placeholder="Treat Type">
-                    <button onclick="addTreatType()">Add</button>
+                <div class="section-header" onclick="toggleSection('treat-content', this)">
+                    <h3>Treat Types</h3>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div id="settings-treat-list"></div>
+                <div id="treat-content" class="section-content">
+                    <div class="input-group" style="grid-template-columns: 1fr auto;">
+                        <input type="text" id="new-treat-type" placeholder="Treat Type">
+                        <button onclick="addTreatType()">Add</button>
+                    </div>
+                    <div id="settings-treat-list"></div>
+                </div>
             </div>
         </div>
 
@@ -522,29 +506,27 @@
 
     <script>
         // --- Data Initialization ---
-        
-        // Define default employee list
-        const defaultMembers = [
-            { id: 1, name: "Anees", dob: "" },
-            { id: 2, name: "Thanseer", dob: "" },
-            { id: 3, name: "Shabeer", dob: "" },
-            { id: 4, name: "Giljith", dob: "" },
-            { id: 5, name: "Fahid", dob: "" },
-            { id: 6, name: "Ijas", dob: "" },
-            { id: 7, name: "Shifin", dob: "" },
-            { id: 8, name: "Akash", dob: "" },
-            { id: 9, name: "Fasal", dob: "" },
-            { id: 10, name: "Arshad", dob: "" },
-            { id: 11, name: "Bineesh", dob: "" },
-            { id: 12, name: "Subin", dob: "" },
-            { id: 13, name: "Delvin", dob: "" },
-            { id: 14, name: "Fawas", dob: "" },
-            { id: 15, name: "Fayas", dob: "" },
-            { id: 16, name: "Chitra", dob: "" },
+        const initialMembers = [
+            { id: 1, name: "Nishanth", dob: "1977-05-02" },
+            { id: 2, name: "Anees", dob: "1992-09-06" },
+            { id: 3, name: "Thanseer", dob: "1995-10-29" },
+            { id: 4, name: "Shabeer", dob: "1996-04-27" },
+            { id: 5, name: "Giljith", dob: "1979-05-24" },
+            { id: 6, name: "Fahid", dob: "1994-12-24" },
+            { id: 7, name: "Shifin", dob: "1999-10-16" },
+            { id: 8, name: "Akash", dob: "1996-03-14" },
+            { id: 9, name: "Fasal", dob: "1993-05-02" },
+            { id: 10, name: "Arshad", dob: "1995-04-23" },
+            { id: 11, name: "Bineesh", dob: "1987-05-01" },
+            { id: 12, name: "Subin", dob: "1997-10-29" },
+            { id: 13, name: "Delvin", dob: "2001-06-30" },
+            { id: 14, name: "Fawas", dob: "1995-01-12" },
+            { id: 15, name: "Fayas", dob: "1994-04-12" },
+            { id: 16, name: "Chithra", dob: "1990-08-03" },
             { id: 17, name: "Najmunneesa", dob: "" },
-            { id: 18, name: "Ramzy Abdurahiman K", dob: "" },
+            { id: 18, name: "Ramzy", dob: "" },
             { id: 19, name: "Zavad", dob: "" },
-            { id: 20, name: "Sehil", dob: "" },
+            { id: 20, name: "Sehil", dob: "1996-02-02" },
             { id: 21, name: "Shibli", dob: "" },
             { id: 22, name: "Mubaz", dob: "" },
             { id: 23, name: "Harsha", dob: "" },
@@ -553,13 +535,11 @@
             { id: 26, name: "Saheer", dob: "" }
         ];
 
-        // Retrieve existing members from localStorage, or apply default list if empty
-        let savedMembers = JSON.parse(localStorage.getItem('chaaya_members'));
-        if (!savedMembers || savedMembers.length === 0) {
-            savedMembers = defaultMembers;
-            localStorage.setItem('chaaya_members', JSON.stringify(savedMembers));
+        let members = JSON.parse(localStorage.getItem('chaaya_members'));
+        if (!members || members.length === 0) {
+            members = initialMembers;
+            localStorage.setItem('chaaya_members', JSON.stringify(members));
         }
-        let members = savedMembers;
 
         let foodItems = JSON.parse(localStorage.getItem('chaaya_foods')) || [];
         let treatTypes = JSON.parse(localStorage.getItem('chaaya_treats')) || [
@@ -567,18 +547,19 @@
         ];
         let events = JSON.parse(localStorage.getItem('chaaya_events')) || [];
 
-        // Temporary state for the active event creation
         let currentSelectedMembers = [];
+        let editingMemberId = null;
 
-        // Helper: Format Date to dd-mmm-yyyy
+        // Helper: Format Date safely
         function formatDate(dateStr) {
-            if (!dateStr) return '';
+            if (!dateStr) return 'N/A';
             const d = new Date(dateStr);
+            if (isNaN(d)) return 'N/A';
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             return `${d.getDate().toString().padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
         }
 
-        // --- UI Navigation ---
+        // --- UI Navigation & Collapse ---
         function openTab(tabId) {
             document.querySelectorAll('.sheet').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -588,6 +569,18 @@
             if (tabId === 'sheet1') loadSheet1();
             if (tabId === 'sheet3') loadSheet3();
             if (tabId === 'sheet4') loadSheet4();
+        }
+
+        function toggleSection(contentId, headerEl) {
+            const content = document.getElementById(contentId);
+            const chevron = headerEl.querySelector('.chevron');
+            if (content.style.display === "none") {
+                content.style.display = "block";
+                chevron.classList.remove('up');
+            } else {
+                content.style.display = "none";
+                chevron.classList.add('up');
+            }
         }
 
         // --- Sheet 1 Logic ---
@@ -628,17 +621,34 @@
             });
 
             loadSheet2();
-            
-            // Switch tabs visually
             document.querySelectorAll('.tab-btn')[1].click();
         }
 
-        // --- Sheet 2 Logic ---
+        // --- Sheet 2 Logic (Same vs Separate) ---
+        function toggleFoodMode() {
+            const mode = document.getElementById('food-mode').value;
+            if (mode === 'same') {
+                document.getElementById('same-food-container').style.display = 'block';
+                document.getElementById('food-selection-list').style.display = 'none';
+            } else {
+                document.getElementById('same-food-container').style.display = 'none';
+                document.getElementById('food-selection-list').style.display = 'block';
+            }
+            updateEstimatedTotal();
+        }
+
         function loadSheet2() {
-            const container = document.getElementById('food-selection-list');
+            document.getElementById('sheet2-pax').innerText = currentSelectedMembers.length;
+            document.getElementById('food-mode').value = 'same'; 
+
             const foodOptions = `<option value="">-- Select Food --</option>` + 
                 foodItems.map(f => `<option value="${f.id}" data-rate="${f.rate}">${f.name} (₹${f.rate})</option>`).join('');
 
+            // For "Same" mode
+            document.getElementById('food-for-all').innerHTML = foodOptions;
+
+            // For "Separate" mode
+            const container = document.getElementById('food-selection-list');
             container.innerHTML = currentSelectedMembers.map(m => `
                 <div class="form-group" style="background: var(--bg-color); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                     <label style="color: var(--primary); font-weight: 600; font-size: 1rem;">${m.name}</label>
@@ -647,18 +657,28 @@
                     </select>
                 </div>
             `).join('');
-            updateEstimatedTotal();
+            
+            toggleFoodMode(); // Initialize visibility and total
         }
 
         function updateEstimatedTotal() {
             let total = 0;
-            currentSelectedMembers.forEach(m => {
-                const select = document.getElementById(`food-for-${m.id}`);
-                const selectedOption = select.options[select.selectedIndex];
-                if (selectedOption.value !== "") {
-                    total += parseFloat(selectedOption.getAttribute('data-rate'));
+            const mode = document.getElementById('food-mode').value;
+            
+            if (mode === 'same') {
+                const select = document.getElementById('food-for-all');
+                if (select.value !== "") {
+                    const rate = parseFloat(select.options[select.selectedIndex].getAttribute('data-rate'));
+                    total = rate * currentSelectedMembers.length;
                 }
-            });
+            } else {
+                currentSelectedMembers.forEach(m => {
+                    const select = document.getElementById(`food-for-${m.id}`);
+                    if (select.value !== "") {
+                        total += parseFloat(select.options[select.selectedIndex].getAttribute('data-rate'));
+                    }
+                });
+            }
             document.getElementById('estimated-total').innerText = total;
         }
 
@@ -666,6 +686,7 @@
             const date = document.getElementById('event-date').value;
             const hostId = document.getElementById('event-host').value;
             const treatType = document.getElementById('event-type').value;
+            const mode = document.getElementById('food-mode').value;
 
             if(!date || !hostId || !treatType) {
                 alert("Please complete event details on Sheet 1.");
@@ -675,23 +696,44 @@
             let totalAmount = 0;
             const finalParticipants = [];
 
-            for (let m of currentSelectedMembers) {
-                const select = document.getElementById(`food-for-${m.id}`);
+            if (mode === 'same') {
+                const select = document.getElementById('food-for-all');
                 if (!select.value) {
-                    alert(`Please select a food item for ${m.name}`);
+                    alert("Please select a food item for everyone.");
                     return;
                 }
                 const selectedOption = select.options[select.selectedIndex];
                 const rate = parseFloat(selectedOption.getAttribute('data-rate'));
                 
-                finalParticipants.push({
-                    memberId: m.id,
-                    memberName: m.name,
-                    foodId: select.value,
-                    foodName: selectedOption.text.split(' (₹')[0], // Extract just the name
-                    rate: rate
-                });
-                totalAmount += rate;
+                for (let m of currentSelectedMembers) {
+                    finalParticipants.push({
+                        memberId: m.id,
+                        memberName: m.name,
+                        foodId: select.value,
+                        foodName: selectedOption.text.split(' (₹')[0],
+                        rate: rate
+                    });
+                    totalAmount += rate;
+                }
+            } else {
+                for (let m of currentSelectedMembers) {
+                    const select = document.getElementById(`food-for-${m.id}`);
+                    if (!select.value) {
+                        alert(`Please select a food item for ${m.name}`);
+                        return;
+                    }
+                    const selectedOption = select.options[select.selectedIndex];
+                    const rate = parseFloat(selectedOption.getAttribute('data-rate'));
+                    
+                    finalParticipants.push({
+                        memberId: m.id,
+                        memberName: m.name,
+                        foodId: select.value,
+                        foodName: selectedOption.text.split(' (₹')[0],
+                        rate: rate
+                    });
+                    totalAmount += rate;
+                }
             }
 
             const newEvent = {
@@ -705,7 +747,7 @@
                 totalParticipants: finalParticipants.length
             };
 
-            events.unshift(newEvent); // Add to beginning
+            events.unshift(newEvent); 
             localStorage.setItem('chaaya_events', JSON.stringify(events));
             
             alert("Event Saved Successfully!");
@@ -719,7 +761,10 @@
             document.getElementById('settings-members-list').innerHTML = members.map(m => `
                 <div class="list-row">
                     <div><b>${m.name}</b> <br><small>DOB: ${formatDate(m.dob)}</small></div>
-                    <button class="btn-small btn-danger" onclick="deleteMember(${m.id})">Delete</button>
+                    <div class="action-btns">
+                        <button class="btn-small btn-warning" onclick="editMember(${m.id})">Edit</button>
+                        <button class="btn-small btn-danger" onclick="deleteMember(${m.id})">Del</button>
+                    </div>
                 </div>
             `).join('') || '<div class="list-row" style="justify-content:center; color:var(--text-muted);">No members added.</div>';
 
@@ -738,16 +783,47 @@
             `).join('');
         }
 
+        // Member Logic
         function addMember() {
             const name = document.getElementById('new-member-name').value;
             const dob = document.getElementById('new-member-dob').value;
             if(!name) return;
-            members.push({ id: Date.now(), name, dob });
+            
+            if (editingMemberId !== null) {
+                const member = members.find(m => m.id === editingMemberId);
+                if(member) {
+                    member.name = name;
+                    member.dob = dob;
+                }
+                editingMemberId = null;
+                document.getElementById('add-member-btn').innerText = "Add";
+            } else {
+                members.push({ id: Date.now(), name, dob });
+            }
+            
             localStorage.setItem('chaaya_members', JSON.stringify(members));
             document.getElementById('new-member-name').value = '';
             document.getElementById('new-member-dob').value = '';
             loadSheet3();
         }
+
+        function editMember(id) {
+            const member = members.find(m => m.id === id);
+            if(member) {
+                document.getElementById('new-member-name').value = member.name;
+                document.getElementById('new-member-dob').value = member.dob || '';
+                editingMemberId = id;
+                document.getElementById('add-member-btn').innerText = "Update";
+                
+                // Ensure the section is expanded to see the fields
+                const content = document.getElementById('members-content');
+                if(content.style.display === "none") {
+                    toggleSection('members-content', content.previousElementSibling);
+                }
+                document.getElementById('new-member-name').focus();
+            }
+        }
+
         function deleteMember(id) {
             if(confirm("Delete this member?")) {
                 members = members.filter(m => m.id !== id);
@@ -756,6 +832,7 @@
             }
         }
 
+        // Food Logic
         function addFood() {
             const name = document.getElementById('new-food-name').value;
             const rate = parseFloat(document.getElementById('new-food-rate').value);
@@ -774,6 +851,7 @@
             }
         }
 
+        // Treat Type Logic
         function addTreatType() {
             const type = document.getElementById('new-treat-type').value;
             if(!type) return;
