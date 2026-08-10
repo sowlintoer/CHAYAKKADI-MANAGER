@@ -207,7 +207,9 @@
             color: #000; margin-bottom: 20px;
         }
         .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
+        .receipt-section-title { margin: 15px 0 10px 0; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .receipt-row:last-child { border-bottom: none; }
         .receipt-row.bold { font-weight: 700; border-top: 2px solid #ccc; border-bottom: none; margin-top: 10px; padding-top: 15px; font-size: 1.1rem; }
 
         /* Settings Collapsible */
@@ -333,8 +335,16 @@
                     <div style="color: var(--text-muted); font-size: 0.9rem;" id="receipt-meta">Date • Host • Treat Type</div>
                 </div>
                 
-                <div id="receipt-items">
-                    <!-- Items injected here -->
+                <!-- Individual Details -->
+                <h4 class="receipt-section-title">👥 Participant Details</h4>
+                <div id="receipt-items" style="margin-bottom: 20px;">
+                    <!-- Individual Items injected here -->
+                </div>
+
+                <!-- Vendor Summary -->
+                <h4 class="receipt-section-title">🛒 For Vendor (Summary)</h4>
+                <div id="vendor-items">
+                    <!-- Aggregated Vendor Items injected here -->
                 </div>
                 
                 <div class="receipt-row bold">
@@ -455,10 +465,10 @@
         let events = JSON.parse(localStorage.getItem('chaaya_events')) || [];
 
         // Application State
-        let currentSelectedMembers = []; // Array of { id, name, foodId, foodName, rate }
+        let currentSelectedMembers = []; 
         let isBulkMode = false;
         let bulkSelectedIds = new Set();
-        let targetMemberForModal = null; // Single member ID when selecting individually
+        let targetMemberForModal = null; 
 
         // Helpers
         function formatDate(dateStr) {
@@ -480,7 +490,6 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             
-            // Highlight correct tab btn
             const indexMap = {'sheet1':0, 'sheet2':1, 'sheet3':2, 'sheet4':3, 'sheet5':4};
             document.querySelectorAll('.tab-btn')[indexMap[tabId]].classList.add('active');
 
@@ -522,7 +531,6 @@
 
             const listContainer = document.getElementById('attendance-list');
             listContainer.innerHTML = members.map(m => {
-                // Keep checked if they were previously selected (for back navigation)
                 const isChecked = currentSelectedMembers.some(c => c.id == m.id) ? 'checked' : '';
                 return `
                 <div class="member-list-item" onclick="toggleCheckbox(${m.id})">
@@ -551,20 +559,18 @@
                 return;
             }
             
-            // Build new selection list while preserving existing assigned foods if any
             let newSelection = [];
             checkedBoxes.forEach(cb => {
                 const member = members.find(m => m.id == cb.value);
                 const existing = currentSelectedMembers.find(c => c.id == member.id);
                 if (existing) {
-                    newSelection.push(existing); // keep assigned food
+                    newSelection.push(existing);
                 } else {
                     newSelection.push({ id: member.id, name: member.name, foodId: null, foodName: null, rate: 0 });
                 }
             });
             currentSelectedMembers = newSelection;
 
-            // Reset bulk mode on fresh entry
             isBulkMode = false;
             bulkSelectedIds.clear();
 
@@ -621,7 +627,7 @@
 
         function selectAllBulk() {
             if (bulkSelectedIds.size === currentSelectedMembers.length) {
-                bulkSelectedIds.clear(); // Deselect all if all are selected
+                bulkSelectedIds.clear();
             } else {
                 currentSelectedMembers.forEach(m => bulkSelectedIds.add(m.id));
             }
@@ -634,7 +640,7 @@
                 else bulkSelectedIds.add(id);
                 loadSheet2();
             } else {
-                targetMemberForModal = [id]; // Array of targets
+                targetMemberForModal = [id];
                 openFoodModal();
             }
         }
@@ -682,8 +688,8 @@
             });
             
             if (isBulkMode) {
-                bulkSelectedIds.clear(); // clear selection after applying
-                isBulkMode = false; // Optional: exit bulk mode after apply
+                bulkSelectedIds.clear();
+                isBulkMode = false;
             }
             
             closeFoodModal();
@@ -691,7 +697,6 @@
         }
 
         function goToSheet3() {
-            // Validate all have food
             const missing = currentSelectedMembers.filter(m => m.foodId === null);
             if (missing.length > 0) {
                 alert(`Please assign food to everyone. Missing: ${missing.map(m=>m.name).join(', ')}`);
@@ -710,6 +715,8 @@
             document.getElementById('receipt-meta').innerHTML = `${formatHistoryDate(date)} <br> Host: <b>${hostName}</b> <br> Treat: ${treatType}`;
             
             let total = 0;
+            
+            // Section 1: Individual Participants
             const listContainer = document.getElementById('receipt-items');
             listContainer.innerHTML = currentSelectedMembers.map(m => {
                 total += m.rate;
@@ -717,6 +724,28 @@
                 <div class="receipt-row">
                     <div><b>${m.name}</b> <br><span style="font-size:0.8rem; color:var(--text-muted)">${m.foodName}</span></div>
                     <div>₹${m.rate}</div>
+                </div>
+                `;
+            }).join('');
+
+            // Section 2: Vendor Summary Aggregation
+            const foodCounts = {};
+            currentSelectedMembers.forEach(m => {
+                if(foodCounts[m.foodName]) {
+                    foodCounts[m.foodName].count += 1;
+                    foodCounts[m.foodName].totalRate += m.rate;
+                } else {
+                    foodCounts[m.foodName] = { count: 1, rate: m.rate, totalRate: m.rate };
+                }
+            });
+
+            const vendorContainer = document.getElementById('vendor-items');
+            vendorContainer.innerHTML = Object.keys(foodCounts).map(foodName => {
+                const item = foodCounts[foodName];
+                return `
+                <div class="receipt-row">
+                    <div><b>${foodName}</b> x ${item.count} <br><span style="font-size:0.8rem; color:var(--text-muted)">₹${item.rate} each</span></div>
+                    <div>₹${item.totalRate}</div>
                 </div>
                 `;
             }).join('');
@@ -759,7 +788,6 @@
             
             alert("Event Saved Successfully!");
             
-            // Reset state
             currentSelectedMembers = [];
             isBulkMode = false;
             bulkSelectedIds.clear();
