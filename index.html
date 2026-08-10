@@ -433,6 +433,7 @@
                             <th>Treat Type</th>
                             <th>Pax</th>
                             <th>Amount (₹)</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="history-table-body">
@@ -987,11 +988,41 @@
                     <td><span style="background: var(--bg-color); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border);">${e.treatType}</span></td>
                     <td>${e.totalParticipants}</td>
                     <td style="color: var(--success); font-weight: 700;">₹${e.totalAmount}</td>
+                    <td><button class="btn-small btn-danger" onclick="deleteEvent(${e.id})">Delete</button></td>
                 </tr>
             `).join('');
             
             if (events.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">No events saved yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: var(--text-muted);">No events saved yet.</td></tr>`;
+            }
+        }
+
+        // --- Delete Event Logic ---
+        async function deleteEvent(eventId) {
+            if (confirm("Are you sure you want to delete this event? This action cannot be undone.")) {
+                showLoader("Deleting Event...");
+                
+                const payload = {
+                    action: "deleteEvent",
+                    data: { id: eventId }
+                };
+
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'text/plain'},
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    // Remove the event locally
+                    events = events.filter(e => e.id !== eventId);
+                    
+                    // Refresh the History UI
+                    loadSheet5();
+                } catch(e) {
+                    alert("Failed to delete event. Check connection. Error: " + e.message);
+                }
+                hideLoader();
             }
         }
 
