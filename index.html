@@ -45,6 +45,15 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Sticky Wrapper for Header & Tabs */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--bg-color);
+            padding-bottom: 15px; /* Creates spacing before content slides under */
+        }
+
         header {
             background-color: var(--card-bg);
             color: var(--text-main);
@@ -108,7 +117,7 @@
         /* Main Container & Sheets */
         .container {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 10px auto 20px;
             padding: 0 15px;
         }
 
@@ -360,23 +369,26 @@
         @media (max-width: 600px) {
             .input-group { grid-template-columns: 1fr; }
             .summary-box { flex-direction: column; gap: 15px; text-align: center; }
-            .attendance-wrapper { grid-template-columns: 1fr 1fr; } /* At least 2 columns on mobile */
+            .attendance-wrapper { grid-template-columns: 1fr 1fr; } 
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
-        Chaayakkadi Manager
-    </header>
+    <!-- Sticky Header Wrapper -->
+    <div class="sticky-header">
+        <header>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+            Chaayakkadi Manager
+        </header>
 
-    <div class="tabs-container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('sheet1')">Setup</button>
-            <button class="tab-btn" onclick="openTab('sheet2')">Food</button>
-            <button class="tab-btn" onclick="openTab('sheet3')">Settings</button>
-            <button class="tab-btn" onclick="openTab('sheet4')">History</button>
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab('sheet1')">Setup</button>
+                <button class="tab-btn" onclick="openTab('sheet2')">Food</button>
+                <button class="tab-btn" onclick="openTab('sheet3')">Settings</button>
+                <button class="tab-btn" onclick="openTab('sheet4')">History</button>
+            </div>
         </div>
     </div>
 
@@ -531,7 +543,7 @@
     </div>
 
     <script>
-        // --- Data Initialization with default employees ---
+        // --- Data Initialization with new employees ---
         const initialMembers = [
             { id: 1, name: "Nishanth", dob: "1977-05-02" },
             { id: 2, name: "Anees", dob: "1992-09-06" },
@@ -549,20 +561,12 @@
             { id: 14, name: "Fawas", dob: "1995-01-12" },
             { id: 15, name: "Fayas", dob: "1994-04-12" },
             { id: 16, name: "Chithra", dob: "1990-08-03" },
-            { id: 17, name: "Najmunneesa", dob: "" },
-            { id: 18, name: "Ramzy", dob: "" },
-            { id: 19, name: "Zavad", dob: "" },
-            { id: 20, name: "Sehil", dob: "1996-02-02" },
-            { id: 21, name: "Shibli", dob: "" },
-            { id: 22, name: "Mubaz", dob: "" },
-            { id: 23, name: "Harsha", dob: "" },
-            { id: 24, name: "Jastin", dob: "" },
-            { id: 25, name: "Gafoor", dob: "" },
-            { id: 26, name: "Saheer", dob: "" }
+            { id: 17, name: "Sehil", dob: "1996-02-02" }
         ];
 
         let members = JSON.parse(localStorage.getItem('chaaya_members'));
-        if (!members || members.length === 0) {
+        // Load initial members if localStorage is empty or contains the old list of 26 
+        if (!members || members.length === 0 || members.length === 26) {
             members = initialMembers;
             localStorage.setItem('chaaya_members', JSON.stringify(members));
         }
@@ -576,11 +580,15 @@
         // Temporary state for the active event creation
         let currentSelectedMembers = [];
 
-        // Helper: Format Date to dd/mm/yyyy
+        // Helper: Format Date to dd/mm/yyyy exactly
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            const d = new Date(dateStr);
-            return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                // Ensure format maps from yyyy-mm-dd string to dd/mm/yyyy
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
         }
         
         // Helper: For main history view dd-mmm-yyyy
@@ -601,6 +609,9 @@
             if (tabId === 'sheet1') loadSheet1();
             if (tabId === 'sheet3') loadSheet3();
             if (tabId === 'sheet4') loadSheet4();
+            
+            // Scroll back to top whenever a new tab opens to compensate for sticky header
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // --- Sheet 1 Logic ---
