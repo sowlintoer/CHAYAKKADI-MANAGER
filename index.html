@@ -7,15 +7,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2canvas for Image Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            /* Modern Color Palette */
             --primary: #4f46e5;       
             --primary-hover: #4338ca; 
             --success: #10b981;       
             --success-hover: #059669; 
             --danger: #ef4444;        
             --danger-hover: #dc2626;  
+            --warning: #f59e0b;
             
             --bg-color: #f8fafc;      
             --card-bg: #ffffff;
@@ -23,12 +25,10 @@
             --text-muted: #64748b;    
             --border: #e2e8f0;        
             
-            /* Spacing & Radii */
             --radius-lg: 1rem;
             --radius-md: 0.75rem;
             --radius-sm: 0.5rem;
             
-            /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-focus: 0 0 0 3px rgba(79, 70, 229, 0.2);
@@ -51,7 +51,7 @@
             top: 0;
             z-index: 1000;
             background-color: var(--bg-color);
-            padding-bottom: 15px; /* Creates spacing before content slides under */
+            padding-bottom: 15px;
         }
 
         header {
@@ -69,7 +69,6 @@
             gap: 10px;
         }
 
-        /* Navigation Tabs */
         .tabs-container {
             max-width: 800px;
             margin: 20px auto 0;
@@ -104,17 +103,9 @@
             transition: var(--transition);
         }
 
-        .tab-btn:hover {
-            color: var(--text-main);
-            background: var(--bg-color);
-        }
+        .tab-btn:hover { color: var(--text-main); background: var(--bg-color); }
+        .tab-btn.active { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
 
-        .tab-btn.active {
-            color: var(--primary);
-            background: rgba(79, 70, 229, 0.1);
-        }
-
-        /* Main Container & Sheets */
         .container {
             max-width: 800px;
             margin: 10px auto 20px;
@@ -132,248 +123,131 @@
             animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .sheet.active {
-            display: block;
-        }
+        .sheet.active { display: block; }
 
-        h2 {
-            margin-top: 0;
-            font-size: 1.25rem;
-            color: var(--text-main);
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-        }
-        
-        h3 {
-            font-size: 1.1rem;
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        h2 { margin-top: 0; font-size: 1.25rem; color: var(--text-main); border-bottom: 2px solid var(--bg-color); padding-bottom: 12px; margin-bottom: 20px; }
+        h3 { font-size: 1.1rem; color: var(--text-main); margin: 0; display: flex; align-items: center; justify-content: space-between; }
 
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
 
         input, select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            background-color: var(--bg-color);
-            transition: var(--transition);
+            width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            box-sizing: border-box; font-family: 'Inter', sans-serif; font-size: 0.95rem; color: var(--text-main);
+            background-color: var(--bg-color); transition: var(--transition);
         }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow-focus);
-        }
+        input:focus, select:focus { outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: var(--shadow-focus); }
 
         /* Buttons */
         button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            background-color: var(--primary); color: white; border: none; padding: 12px 20px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 1rem; font-weight: 600;
+            font-family: 'Inter', sans-serif; transition: var(--transition); display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px;
         }
-
         button:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
         button:active { transform: translateY(0); }
-
         .btn-success { background-color: var(--success); }
         .btn-success:hover { background-color: var(--success-hover); }
-        
         .btn-danger { background-color: var(--danger); }
         .btn-danger:hover { background-color: var(--danger-hover); }
+        .btn-outline { background-color: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--bg-color); }
+        .btn-secondary { background-color: var(--text-muted); }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-small { padding: 6px 12px; font-size: 0.85rem; border-radius: var(--radius-sm); }
         
-        .btn-small { 
-            padding: 6px 12px; 
-            font-size: 0.85rem; 
-            border-radius: var(--radius-sm);
-        }
+        .action-row { display: flex; gap: 10px; margin-top: 24px; }
+        .abort-row { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
 
-        /* Setup Grid (Side by side checkboxes) */
+        /* Setup Grid (Side by side) */
         .attendance-wrapper {
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            
-            /* Grid layout for side-by-side display */
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
+            background: var(--bg-color); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 15px; max-height: 400px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;
         }
 
         .member-list-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
+            display: flex; align-items: center; padding: 10px 12px; background: var(--card-bg);
+            border: 2px solid var(--border); border-radius: var(--radius-sm); transition: var(--transition); cursor: pointer;
         }
-
-        .member-list-item:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .member-list-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
+        .member-list-item:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+        .member-list-item.selected-bulk { border-color: var(--primary); background: rgba(79, 70, 229, 0.05); }
+        .member-list-item.has-food { border-color: var(--success); }
         
-        .member-list-item label {
-            margin: 0;
-            font-size: 0.95rem;
-            cursor: pointer;
-            width: 100%;
-        }
+        .member-list-item input[type="checkbox"] { width: 18px; height: 18px; margin-right: 10px; accent-color: var(--primary); pointer-events: none; }
+        .member-list-item label { margin: 0; font-size: 0.95rem; cursor: pointer; width: 100%; pointer-events: none; }
 
         .count-widget {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(79,70,229,0.05));
-            border: 1px solid rgba(79,70,229,0.2);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            margin: 20px 0;
+            border: 1px solid rgba(79,70,229,0.2); border-radius: var(--radius-lg); padding: 20px; margin: 20px 0;
         }
-
         .large-count { font-size: 4rem; color: var(--primary); font-weight: 700; line-height: 1; }
         .count-label { color: var(--text-muted); font-weight: 500; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; }
 
-        /* Settings Collapsible Sections */
-        details.settings-section {
-            background: var(--bg-color);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            margin-bottom: 16px;
+        /* Modal Settings */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px);
         }
+        .modal-content {
+            background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg);
+            width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-md);
+        }
+        .food-grid { display: grid; gap: 10px; margin-top: 15px; }
+        .food-btn { justify-content: space-between; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); font-weight: 500; }
+        .food-btn:hover { background: rgba(79, 70, 229, 0.1); border-color: var(--primary); color: var(--primary); }
 
-        details.settings-section summary {
-            padding: 16px 20px;
-            cursor: pointer;
-            list-style: none; /* Removes default arrow in standard browsers */
-            user-select: none;
+        /* Receipt Capture Area */
+        .receipt-container {
+            background: #fff; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border);
+            color: #000; margin-bottom: 20px;
         }
-        
-        /* Remove default arrow in Safari */
+        .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
+        .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .receipt-row.bold { font-weight: 700; border-top: 2px solid #ccc; border-bottom: none; margin-top: 10px; padding-top: 15px; font-size: 1.1rem; }
+
+        /* Settings Collapsible */
+        details.settings-section { background: var(--bg-color); border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 16px; }
+        details.settings-section summary { padding: 16px 20px; cursor: pointer; list-style: none; user-select: none; }
         details.settings-section summary::-webkit-details-marker { display: none; }
+        .arrow-icon { transition: transform 0.3s ease; color: var(--text-muted); }
+        details[open].settings-section summary .arrow-icon { transform: rotate(180deg); }
+        details[open].settings-section summary { border-bottom: 1px solid var(--border); }
+        .settings-content { padding: 20px; }
 
-        .arrow-icon {
-            transition: transform 0.3s ease;
-            color: var(--text-muted);
-        }
-
-        details[open].settings-section summary .arrow-icon {
-            transform: rotate(180deg);
-        }
-        
-        details[open].settings-section summary {
-            border-bottom: 1px solid var(--border);
-        }
-
-        .settings-content {
-            padding: 20px;
-        }
-
-        .list-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            margin-bottom: 8px;
-            box-shadow: var(--shadow-sm);
-        }
-        
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; }
         .list-row b { color: var(--text-main); font-weight: 600; }
         .list-row small { color: var(--text-muted); }
-
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+        .input-group { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 16px; }
 
         /* Tables */
         .table-responsive { overflow-x: auto; background: var(--card-bg); border-radius: var(--radius-md); border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background-color: var(--bg-color); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-        tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background-color: var(--bg-color); }
+        th { background-color: var(--bg-color); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; }
 
-        .summary-box {
-            background: var(--bg-color);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            margin-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .top-summary { margin-top: 0; margin-bottom: 24px; justify-content: center; }
-
-        .summary-total { font-size: 1.5rem; font-weight: 700; color: var(--success); }
-
-        /* Mobile Adjustments */
         @media (max-width: 600px) {
             .input-group { grid-template-columns: 1fr; }
-            .summary-box { flex-direction: column; gap: 15px; text-align: center; }
             .attendance-wrapper { grid-template-columns: 1fr 1fr; } 
         }
     </style>
 </head>
 <body>
+
+    <!-- Food Selection Modal -->
+    <div id="food-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">Select Food Item</h3>
+            <div id="food-modal-list" class="food-grid">
+                <!-- Food buttons injected here -->
+            </div>
+            <button onclick="closeFoodModal()" class="btn-outline" style="width: 100%; margin-top: 15px;">Cancel</button>
+        </div>
+    </div>
 
     <!-- Sticky Header Wrapper -->
     <div class="sticky-header">
@@ -386,8 +260,9 @@
             <div class="tabs">
                 <button class="tab-btn active" onclick="openTab('sheet1')">Setup</button>
                 <button class="tab-btn" onclick="openTab('sheet2')">Food</button>
-                <button class="tab-btn" onclick="openTab('sheet3')">Settings</button>
-                <button class="tab-btn" onclick="openTab('sheet4')">History</button>
+                <button class="tab-btn" onclick="openTab('sheet3')">Confirm</button>
+                <button class="tab-btn" onclick="openTab('sheet4')">Settings</button>
+                <button class="tab-btn" onclick="openTab('sheet5')">History</button>
             </div>
         </div>
     </div>
@@ -417,68 +292,77 @@
 
             <h3 style="margin-bottom: 12px;">Select Present Members</h3>
             <div class="attendance-wrapper" id="attendance-list">
-                <!-- Checkboxes injected here in Grid layout -->
+                <!-- Checkboxes injected here -->
             </div>
 
-            <button onclick="goToSheet2()" style="width: 100%; margin-top: 24px; padding: 14px;">
-                Proceed to Food Selection
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
+            <div class="action-row">
+                <button onclick="goToSheet2()" style="flex:1;">Proceed to Food Selection →</button>
+            </div>
         </div>
 
         <!-- SHEET 2: Food Selection -->
         <div id="sheet2" class="sheet">
-            <h2>Select Food</h2>
+            <h2>Assign Food</h2>
             
-            <!-- Top Summary Count -->
-            <div class="summary-box top-summary">
-                <div style="color: var(--text-main); font-weight: 600; font-size: 1.1rem;">
-                    Total Members: <span id="s2-pax-count" style="color: var(--primary); font-size: 1.4rem;">0</span>
-                </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button id="btn-bulk-toggle" class="btn-outline" onclick="toggleBulkMode()" style="flex: 1; min-width: 140px;">Enable Bulk Select</button>
+                <button id="btn-select-all" class="btn-outline" onclick="selectAllBulk()" style="display:none; flex: 1; min-width: 120px;">Select All</button>
+                <button id="btn-apply-bulk" class="btn-success" onclick="openBulkFoodModal()" style="display:none; width: 100%;">Apply Food to Selected</button>
             </div>
 
-            <div class="form-group">
-                <label>Selection Mode</label>
-                <select id="food-mode" onchange="toggleFoodMode()">
-                    <option value="same">Same for all</option>
-                    <option value="separate">Separate (Choose individually)</option>
-                </select>
-            </div>
-
-            <!-- Shown if "Same for all" -->
-            <div id="food-same-section" style="display: block;">
-                <div class="form-group" style="background: var(--bg-color); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <label style="color: var(--primary); font-weight: 600;">Select Food for Everyone</label>
-                    <select id="food-for-all" onchange="updateEstimatedTotal()"></select>
-                </div>
-            </div>
-
-            <!-- Shown if "Separate" -->
-            <div id="food-selection-list" style="display: none;">
-                <!-- Dropdowns injected here -->
+            <div class="attendance-wrapper" id="food-member-list">
+                <!-- Member cards injected here -->
             </div>
             
-            <div class="summary-box">
-                <div>
-                    <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Total</div>
-                    <div class="summary-total">₹<span id="estimated-total">0</span></div>
-                </div>
-                <button class="btn-success" onclick="saveEvent()" style="padding: 14px 24px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                    Save Event
-                </button>
+            <div class="action-row">
+                <button onclick="openTab('sheet1')" class="btn-secondary">← Back</button>
+                <button class="btn-primary" onclick="goToSheet3()" style="flex:1;">Proceed to Confirmation →</button>
+            </div>
+            <div class="abort-row">
+                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Event</button>
             </div>
         </div>
 
-        <!-- SHEET 3: Settings -->
+        <!-- SHEET 3: Confirmation -->
         <div id="sheet3" class="sheet">
+            <h2>Confirmation</h2>
+            
+            <div id="receipt-capture" class="receipt-container">
+                <div class="receipt-header">
+                    <h3 style="justify-content: center; margin-bottom: 5px;">☕ Chaayakkadi Treat</h3>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;" id="receipt-meta">Date • Host • Treat Type</div>
+                </div>
+                
+                <div id="receipt-items">
+                    <!-- Items injected here -->
+                </div>
+                
+                <div class="receipt-row bold">
+                    <span>Total (<span id="receipt-pax">0</span> Pax)</span>
+                    <span>₹<span id="receipt-total">0</span></span>
+                </div>
+            </div>
+
+            <button onclick="downloadImage()" class="btn-outline" style="width: 100%; margin-bottom: 24px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download PNG Image
+            </button>
+            
+            <div class="action-row">
+                <button onclick="openTab('sheet2')" class="btn-secondary">← Back</button>
+                <button class="btn-success" onclick="saveEvent()" style="flex:1;">Save Event ✓</button>
+            </div>
+            <div class="abort-row">
+                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Event</button>
+            </div>
+        </div>
+
+        <!-- SHEET 4: Settings -->
+        <div id="sheet4" class="sheet">
             <h2>Master Settings</h2>
 
-            <!-- Members Collapsible -->
             <details class="settings-section" open>
-                <summary>
-                    <h3>Members <span class="arrow-icon">▼</span></h3>
-                </summary>
+                <summary><h3>Members <span class="arrow-icon">▼</span></h3></summary>
                 <div class="settings-content">
                     <div class="input-group">
                         <input type="text" id="new-member-name" placeholder="Member Name">
@@ -489,11 +373,8 @@
                 </div>
             </details>
 
-            <!-- Food Items Collapsible -->
             <details class="settings-section">
-                <summary>
-                    <h3>Food Items <span class="arrow-icon">▼</span></h3>
-                </summary>
+                <summary><h3>Food Items <span class="arrow-icon">▼</span></h3></summary>
                 <div class="settings-content">
                     <div class="input-group">
                         <input type="text" id="new-food-name" placeholder="Food Item">
@@ -504,11 +385,8 @@
                 </div>
             </details>
 
-            <!-- Treat Types Collapsible -->
             <details class="settings-section">
-                <summary>
-                    <h3>Treat Types <span class="arrow-icon">▼</span></h3>
-                </summary>
+                <summary><h3>Treat Types <span class="arrow-icon">▼</span></h3></summary>
                 <div class="settings-content">
                     <div class="input-group" style="grid-template-columns: 1fr auto;">
                         <input type="text" id="new-treat-type" placeholder="Treat Type">
@@ -519,8 +397,8 @@
             </details>
         </div>
 
-        <!-- SHEET 4: History -->
-        <div id="sheet4" class="sheet">
+        <!-- SHEET 5: History -->
+        <div id="sheet5" class="sheet">
             <h2>Event History</h2>
             <div class="table-responsive">
                 <table>
@@ -543,7 +421,7 @@
     </div>
 
     <script>
-        // --- Data Initialization with new employees ---
+        // --- Data Initialization ---
         const initialMembers = [
             { id: 1, name: "Nishanth", dob: "1977-05-02" },
             { id: 2, name: "Anees", dob: "1992-09-06" },
@@ -565,7 +443,6 @@
         ];
 
         let members = JSON.parse(localStorage.getItem('chaaya_members'));
-        // Load initial members if localStorage is empty or contains the old list of 26 
         if (!members || members.length === 0 || members.length === 26) {
             members = initialMembers;
             localStorage.setItem('chaaya_members', JSON.stringify(members));
@@ -577,21 +454,19 @@
         ];
         let events = JSON.parse(localStorage.getItem('chaaya_events')) || [];
 
-        // Temporary state for the active event creation
-        let currentSelectedMembers = [];
+        // Application State
+        let currentSelectedMembers = []; // Array of { id, name, foodId, foodName, rate }
+        let isBulkMode = false;
+        let bulkSelectedIds = new Set();
+        let targetMemberForModal = null; // Single member ID when selecting individually
 
-        // Helper: Format Date to dd/mm/yyyy exactly
+        // Helpers
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.split('-');
-            if (parts.length === 3) {
-                // Ensure format maps from yyyy-mm-dd string to dd/mm/yyyy
-                return `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
             return dateStr;
         }
-        
-        // Helper: For main history view dd-mmm-yyyy
         function formatHistoryDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
@@ -599,38 +474,68 @@
             return `${d.getDate().toString().padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
         }
 
-        // --- UI Navigation ---
+        // --- Navigation ---
         function openTab(tabId) {
             document.querySelectorAll('.sheet').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+            
+            // Highlight correct tab btn
+            const indexMap = {'sheet1':0, 'sheet2':1, 'sheet3':2, 'sheet4':3, 'sheet5':4};
+            document.querySelectorAll('.tab-btn')[indexMap[tabId]].classList.add('active');
 
             if (tabId === 'sheet1') loadSheet1();
+            if (tabId === 'sheet2') loadSheet2();
             if (tabId === 'sheet3') loadSheet3();
             if (tabId === 'sheet4') loadSheet4();
+            if (tabId === 'sheet5') loadSheet5();
             
-            // Scroll back to top whenever a new tab opens to compensate for sticky header
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function abortEvent() {
+            if(confirm("Are you sure you want to cancel the current event setup? All progress will be lost.")) {
+                currentSelectedMembers = [];
+                document.getElementById('event-date').valueAsDate = new Date();
+                document.querySelectorAll('#attendance-list input[type="checkbox"]').forEach(chk => chk.checked = false);
+                updateCount();
+                isBulkMode = false;
+                bulkSelectedIds.clear();
+                openTab('sheet1');
+            }
         }
 
         // --- Sheet 1 Logic ---
         function loadSheet1() {
-            document.getElementById('event-date').valueAsDate = new Date();
+            if (!document.getElementById('event-date').value) {
+                document.getElementById('event-date').valueAsDate = new Date();
+            }
             
             const hostSelect = document.getElementById('event-host');
-            hostSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-            
+            if(hostSelect.options.length === 0) {
+                hostSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            }
             const typeSelect = document.getElementById('event-type');
-            typeSelect.innerHTML = treatTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+            if(typeSelect.options.length === 0) {
+                typeSelect.innerHTML = treatTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+            }
 
             const listContainer = document.getElementById('attendance-list');
-            listContainer.innerHTML = members.map(m => `
-                <div class="member-list-item">
-                    <input type="checkbox" id="chk-${m.id}" value="${m.id}" onchange="updateCount()">
-                    <label for="chk-${m.id}">${m.name}</label>
+            listContainer.innerHTML = members.map(m => {
+                // Keep checked if they were previously selected (for back navigation)
+                const isChecked = currentSelectedMembers.some(c => c.id == m.id) ? 'checked' : '';
+                return `
+                <div class="member-list-item" onclick="toggleCheckbox(${m.id})">
+                    <input type="checkbox" id="chk-${m.id}" value="${m.id}" ${isChecked}>
+                    <label>${m.name}</label>
                 </div>
-            `).join('');
+            `}).join('');
+            updateCount();
+        }
+
+        function toggleCheckbox(id) {
+            const chk = document.getElementById(`chk-${id}`);
+            chk.checked = !chk.checked;
             updateCount();
         }
 
@@ -646,73 +551,189 @@
                 return;
             }
             
-            currentSelectedMembers = Array.from(checkedBoxes).map(cb => {
+            // Build new selection list while preserving existing assigned foods if any
+            let newSelection = [];
+            checkedBoxes.forEach(cb => {
                 const member = members.find(m => m.id == cb.value);
-                return { id: member.id, name: member.name };
+                const existing = currentSelectedMembers.find(c => c.id == member.id);
+                if (existing) {
+                    newSelection.push(existing); // keep assigned food
+                } else {
+                    newSelection.push({ id: member.id, name: member.name, foodId: null, foodName: null, rate: 0 });
+                }
             });
+            currentSelectedMembers = newSelection;
 
-            loadSheet2();
-            
-            // Switch tabs visually
-            document.querySelectorAll('.tab-btn')[1].click();
+            // Reset bulk mode on fresh entry
+            isBulkMode = false;
+            bulkSelectedIds.clear();
+
+            openTab('sheet2');
         }
 
         // --- Sheet 2 Logic ---
         function loadSheet2() {
-            // Update Top Count
-            document.getElementById('s2-pax-count').innerText = currentSelectedMembers.length;
+            renderFoodMembers();
             
-            const foodOptions = `<option value="">-- Select Food --</option>` + 
-                foodItems.map(f => `<option value="${f.id}" data-rate="${f.rate}">${f.name} (₹${f.rate})</option>`).join('');
+            const bulkToggle = document.getElementById('btn-bulk-toggle');
+            const selectAllBtn = document.getElementById('btn-select-all');
+            const applyBtn = document.getElementById('btn-apply-bulk');
+            
+            if (isBulkMode) {
+                bulkToggle.innerText = "Cancel Bulk Select";
+                bulkToggle.classList.replace('btn-outline', 'btn-secondary');
+                selectAllBtn.style.display = "block";
+                applyBtn.style.display = "block";
+            } else {
+                bulkToggle.innerText = "Enable Bulk Select";
+                bulkToggle.classList.replace('btn-secondary', 'btn-outline');
+                selectAllBtn.style.display = "none";
+                applyBtn.style.display = "none";
+            }
+        }
 
-            // Setup "Same for all" dropdown
-            document.getElementById('food-for-all').innerHTML = foodOptions;
-
-            // Setup "Separate" dropdowns
-            const container = document.getElementById('food-selection-list');
-            container.innerHTML = currentSelectedMembers.map(m => `
-                <div class="form-group" style="background: var(--bg-color); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                    <label style="color: var(--primary); font-weight: 600; font-size: 1rem;">${m.name}</label>
-                    <select id="food-for-${m.id}" onchange="updateEstimatedTotal()" style="margin-top: 8px;">
-                        ${foodOptions}
-                    </select>
+        function renderFoodMembers() {
+            const container = document.getElementById('food-member-list');
+            container.innerHTML = currentSelectedMembers.map(m => {
+                const isSelected = bulkSelectedIds.has(m.id);
+                const hasFood = m.foodId !== null;
+                const statusColor = hasFood ? 'var(--success)' : 'var(--danger)';
+                const subtext = hasFood ? `${m.foodName} (₹${m.rate})` : 'Touch to assign food';
+                
+                return `
+                <div class="member-list-item ${isSelected ? 'selected-bulk' : ''} ${hasFood && !isBulkMode ? 'has-food' : ''}" 
+                     onclick="handleMemberClick(${m.id})">
+                    ${isBulkMode ? `<input type="checkbox" ${isSelected ? 'checked' : ''}>` : ''}
+                    <div style="flex:1">
+                        <div style="font-weight:600">${m.name}</div>
+                        <div style="font-size:0.8rem; color:${statusColor}">${subtext}</div>
+                    </div>
                 </div>
+                `;
+            }).join('');
+        }
+
+        function toggleBulkMode() {
+            isBulkMode = !isBulkMode;
+            if (!isBulkMode) bulkSelectedIds.clear();
+            loadSheet2();
+        }
+
+        function selectAllBulk() {
+            if (bulkSelectedIds.size === currentSelectedMembers.length) {
+                bulkSelectedIds.clear(); // Deselect all if all are selected
+            } else {
+                currentSelectedMembers.forEach(m => bulkSelectedIds.add(m.id));
+            }
+            loadSheet2();
+        }
+
+        function handleMemberClick(id) {
+            if (isBulkMode) {
+                if (bulkSelectedIds.has(id)) bulkSelectedIds.delete(id);
+                else bulkSelectedIds.add(id);
+                loadSheet2();
+            } else {
+                targetMemberForModal = [id]; // Array of targets
+                openFoodModal();
+            }
+        }
+
+        function openBulkFoodModal() {
+            if (bulkSelectedIds.size === 0) {
+                alert("Select members first.");
+                return;
+            }
+            targetMemberForModal = Array.from(bulkSelectedIds);
+            openFoodModal();
+        }
+
+        function openFoodModal() {
+            if(foodItems.length === 0) {
+                alert("Please add food items in the Settings page first.");
+                return;
+            }
+            
+            const listContainer = document.getElementById('food-modal-list');
+            listContainer.innerHTML = foodItems.map(f => `
+                <button class="food-btn" onclick="applyFood(${f.id}, '${f.name}', ${f.rate})">
+                    <span>${f.name}</span>
+                    <span>₹${f.rate}</span>
+                </button>
             `).join('');
             
-            toggleFoodMode(); // Initialize layout based on dropdown
+            document.getElementById('food-modal').style.display = 'flex';
         }
 
-        function toggleFoodMode() {
-            const mode = document.getElementById('food-mode').value;
-            if (mode === 'same') {
-                document.getElementById('food-same-section').style.display = 'block';
-                document.getElementById('food-selection-list').style.display = 'none';
-            } else {
-                document.getElementById('food-same-section').style.display = 'none';
-                document.getElementById('food-selection-list').style.display = 'block';
-            }
-            updateEstimatedTotal();
+        function closeFoodModal() {
+            document.getElementById('food-modal').style.display = 'none';
+            targetMemberForModal = null;
         }
 
-        function updateEstimatedTotal() {
-            let total = 0;
-            const mode = document.getElementById('food-mode').value;
-
-            if (mode === 'same') {
-                const select = document.getElementById('food-for-all');
-                if (select.value) {
-                    const rate = parseFloat(select.options[select.selectedIndex].getAttribute('data-rate'));
-                    total = rate * currentSelectedMembers.length;
+        function applyFood(foodId, foodName, rate) {
+            if (!targetMemberForModal) return;
+            
+            currentSelectedMembers.forEach(m => {
+                if (targetMemberForModal.includes(m.id)) {
+                    m.foodId = foodId;
+                    m.foodName = foodName;
+                    m.rate = rate;
                 }
-            } else {
-                currentSelectedMembers.forEach(m => {
-                    const select = document.getElementById(`food-for-${m.id}`);
-                    if (select && select.value !== "") {
-                        total += parseFloat(select.options[select.selectedIndex].getAttribute('data-rate'));
-                    }
-                });
+            });
+            
+            if (isBulkMode) {
+                bulkSelectedIds.clear(); // clear selection after applying
+                isBulkMode = false; // Optional: exit bulk mode after apply
             }
-            document.getElementById('estimated-total').innerText = total;
+            
+            closeFoodModal();
+            loadSheet2();
+        }
+
+        function goToSheet3() {
+            // Validate all have food
+            const missing = currentSelectedMembers.filter(m => m.foodId === null);
+            if (missing.length > 0) {
+                alert(`Please assign food to everyone. Missing: ${missing.map(m=>m.name).join(', ')}`);
+                return;
+            }
+            openTab('sheet3');
+        }
+
+        // --- Sheet 3 Logic (Confirmation) ---
+        function loadSheet3() {
+            const date = document.getElementById('event-date').value;
+            const hostId = document.getElementById('event-host').value;
+            const hostName = members.find(m => m.id == hostId)?.name || 'Unknown';
+            const treatType = document.getElementById('event-type').value;
+
+            document.getElementById('receipt-meta').innerHTML = `${formatHistoryDate(date)} <br> Host: <b>${hostName}</b> <br> Treat: ${treatType}`;
+            
+            let total = 0;
+            const listContainer = document.getElementById('receipt-items');
+            listContainer.innerHTML = currentSelectedMembers.map(m => {
+                total += m.rate;
+                return `
+                <div class="receipt-row">
+                    <div><b>${m.name}</b> <br><span style="font-size:0.8rem; color:var(--text-muted)">${m.foodName}</span></div>
+                    <div>₹${m.rate}</div>
+                </div>
+                `;
+            }).join('');
+            
+            document.getElementById('receipt-pax').innerText = currentSelectedMembers.length;
+            document.getElementById('receipt-total').innerText = total;
+        }
+
+        function downloadImage() {
+            const captureArea = document.getElementById('receipt-capture');
+            html2canvas(captureArea, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+                const link = document.createElement('a');
+                const date = document.getElementById('event-date').value;
+                link.download = `Chaayakkadi_Treat_${date}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
         function saveEvent() {
@@ -720,54 +741,7 @@
             const hostId = document.getElementById('event-host').value;
             const treatType = document.getElementById('event-type').value;
 
-            if(!date || !hostId || !treatType) {
-                alert("Please complete event details on Setup page.");
-                return;
-            }
-
-            const mode = document.getElementById('food-mode').value;
-            let totalAmount = 0;
-            const finalParticipants = [];
-
-            if (mode === 'same') {
-                const select = document.getElementById('food-for-all');
-                if (!select.value) {
-                    alert("Please select a food item for everyone.");
-                    return;
-                }
-                const selectedOption = select.options[select.selectedIndex];
-                const rate = parseFloat(selectedOption.getAttribute('data-rate'));
-                
-                for (let m of currentSelectedMembers) {
-                    finalParticipants.push({
-                        memberId: m.id,
-                        memberName: m.name,
-                        foodId: select.value,
-                        foodName: selectedOption.text.split(' (₹')[0], 
-                        rate: rate
-                    });
-                    totalAmount += rate;
-                }
-            } else {
-                for (let m of currentSelectedMembers) {
-                    const select = document.getElementById(`food-for-${m.id}`);
-                    if (!select.value) {
-                        alert(`Please select a food item for ${m.name}`);
-                        return;
-                    }
-                    const selectedOption = select.options[select.selectedIndex];
-                    const rate = parseFloat(selectedOption.getAttribute('data-rate'));
-                    
-                    finalParticipants.push({
-                        memberId: m.id,
-                        memberName: m.name,
-                        foodId: select.value,
-                        foodName: selectedOption.text.split(' (₹')[0],
-                        rate: rate
-                    });
-                    totalAmount += rate;
-                }
-            }
+            let totalAmount = currentSelectedMembers.reduce((sum, m) => sum + m.rate, 0);
 
             const newEvent = {
                 id: Date.now(),
@@ -775,23 +749,27 @@
                 hostId: hostId,
                 hostName: members.find(m => m.id == hostId)?.name || 'Unknown',
                 treatType: treatType,
-                participants: finalParticipants,
+                participants: currentSelectedMembers,
                 totalAmount: totalAmount,
-                totalParticipants: finalParticipants.length
+                totalParticipants: currentSelectedMembers.length
             };
 
-            events.unshift(newEvent); // Add to beginning
+            events.unshift(newEvent); 
             localStorage.setItem('chaaya_events', JSON.stringify(events));
             
             alert("Event Saved Successfully!");
             
+            // Reset state
             currentSelectedMembers = [];
-            document.querySelectorAll('.tab-btn')[3].click();
+            isBulkMode = false;
+            bulkSelectedIds.clear();
+            document.getElementById('event-date').valueAsDate = new Date();
+            
+            openTab('sheet5');
         }
 
-        // --- Sheet 3 Logic (Settings) ---
-        function loadSheet3() {
-            // Render Members
+        // --- Sheet 4 Logic (Settings) ---
+        function loadSheet4() {
             document.getElementById('settings-members-list').innerHTML = members.map(m => `
                 <div class="list-row" id="member-row-${m.id}">
                     <div><b>${m.name}</b> <br><small>DOB: ${formatDate(m.dob) || 'Not Added'}</small></div>
@@ -802,7 +780,6 @@
                 </div>
             `).join('') || '<div class="list-row" style="justify-content:center; color:var(--text-muted);">No members added.</div>';
 
-            // Render Food
             document.getElementById('settings-food-list').innerHTML = foodItems.map(f => `
                 <div class="list-row">
                     <div><b>${f.name}</b> <br><small>Rate: ₹${f.rate}</small></div>
@@ -810,7 +787,6 @@
                 </div>
             `).join('') || '<div class="list-row" style="justify-content:center; color:var(--text-muted);">No food items added.</div>';
 
-            // Render Treat Types
             document.getElementById('settings-treat-list').innerHTML = treatTypes.map((t, index) => `
                 <div class="list-row">
                     <div><b>${t}</b></div>
@@ -819,7 +795,6 @@
             `).join('');
         }
 
-        // Inline Edit Logic
         function editMember(id) {
             const member = members.find(m => m.id === id);
             const row = document.getElementById(`member-row-${id}`);
@@ -830,7 +805,7 @@
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px;">
                     <button class="btn-small btn-success" onclick="saveEditMember(${id})">Save</button>
-                    <button class="btn-small" onclick="loadSheet3()" style="background:#64748b;">Cancel</button>
+                    <button class="btn-small" onclick="loadSheet4()" style="background:#64748b;">Cancel</button>
                 </div>
             `;
         }
@@ -840,7 +815,7 @@
             member.name = document.getElementById(`edit-name-${id}`).value;
             member.dob = document.getElementById(`edit-dob-${id}`).value;
             localStorage.setItem('chaaya_members', JSON.stringify(members));
-            loadSheet3();
+            loadSheet4();
         }
 
         function addMember() {
@@ -851,13 +826,13 @@
             localStorage.setItem('chaaya_members', JSON.stringify(members));
             document.getElementById('new-member-name').value = '';
             document.getElementById('new-member-dob').value = '';
-            loadSheet3();
+            loadSheet4();
         }
         function deleteMember(id) {
             if(confirm("Delete this member?")) {
                 members = members.filter(m => m.id !== id);
                 localStorage.setItem('chaaya_members', JSON.stringify(members));
-                loadSheet3();
+                loadSheet4();
             }
         }
 
@@ -869,13 +844,13 @@
             localStorage.setItem('chaaya_foods', JSON.stringify(foodItems));
             document.getElementById('new-food-name').value = '';
             document.getElementById('new-food-rate').value = '';
-            loadSheet3();
+            loadSheet4();
         }
         function deleteFood(id) {
             if(confirm("Delete this food item?")) {
                 foodItems = foodItems.filter(f => f.id !== id);
                 localStorage.setItem('chaaya_foods', JSON.stringify(foodItems));
-                loadSheet3();
+                loadSheet4();
             }
         }
 
@@ -885,18 +860,18 @@
             treatTypes.push(type);
             localStorage.setItem('chaaya_treats', JSON.stringify(treatTypes));
             document.getElementById('new-treat-type').value = '';
-            loadSheet3();
+            loadSheet4();
         }
         function deleteTreatType(index) {
             if(confirm("Delete this treat type?")) {
                 treatTypes.splice(index, 1);
                 localStorage.setItem('chaaya_treats', JSON.stringify(treatTypes));
-                loadSheet3();
+                loadSheet4();
             }
         }
 
-        // --- Sheet 4 Logic (History) ---
-        function loadSheet4() {
+        // --- Sheet 5 Logic (History) ---
+        function loadSheet5() {
             const tbody = document.getElementById('history-table-body');
             tbody.innerHTML = events.map(e => `
                 <tr>
@@ -913,7 +888,7 @@
             }
         }
 
-        // Initial Load
+        // Initialize App
         loadSheet1();
     </script>
 </body>
