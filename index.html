@@ -168,6 +168,13 @@
             padding: 15px; max-height: 400px; overflow-y: auto;
             display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;
         }
+        
+        /* Different grid for Food list to accommodate more detail */
+        .food-assignment-wrapper {
+            background: var(--bg-color); border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 15px; max-height: 500px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;
+        }
 
         .member-list-item {
             display: flex; align-items: center; padding: 10px 12px; background: var(--card-bg);
@@ -195,7 +202,7 @@
         }
         .modal-content {
             background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg);
-            width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-md);
+            width: 90%; max-width: 450px; max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-md);
         }
         .food-grid { display: grid; gap: 10px; margin-top: 15px; }
         .food-btn { justify-content: space-between; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); font-weight: 500; }
@@ -212,7 +219,7 @@
         /* Receipt Capture Area */
         .receipt-container {
             background: #fff; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border);
-            color: #000; margin-bottom: 20px;
+            color: #000; margin-bottom: 15px;
         }
         .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
         .receipt-section-title { margin: 15px 0 10px 0; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
@@ -243,6 +250,7 @@
         @media (max-width: 600px) {
             .input-group { grid-template-columns: 1fr; }
             .attendance-wrapper { grid-template-columns: 1fr 1fr; } 
+            .food-assignment-wrapper { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -255,13 +263,27 @@
     </div>
 
     <!-- Food Selection Modal -->
-    <div id="food-modal" class="modal-overlay">
-        <div class="modal-content">
+    <div id="food-modal" class="modal-overlay" onclick="closeFoodModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="margin-bottom: 15px;">Select Food Item</h3>
             <div id="food-modal-list" class="food-grid">
                 <!-- Food buttons injected here -->
             </div>
-            <button onclick="closeFoodModal()" class="btn-outline" style="width: 100%; margin-top: 15px;">Cancel</button>
+            <button onclick="closeFoodModal(null, true)" class="btn-outline" style="width: 100%; margin-top: 15px;">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- View Event Modal -->
+    <div id="view-modal" class="modal-overlay" onclick="closeViewModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">
+                <h3 style="margin:0;">Event Details</h3>
+                <button class="btn-small btn-outline" onclick="closeViewModal(null, true)">✕</button>
+            </div>
+            <div id="view-modal-body">
+                <!-- Details injected here -->
+            </div>
+            <button onclick="closeViewModal(null, true)" class="btn-secondary" style="width: 100%; margin-top: 20px;">Close</button>
         </div>
     </div>
 
@@ -287,13 +309,13 @@
         
         <!-- SHEET 1: Setup -->
         <div id="sheet1" class="sheet active">
-            <h2>Treat Details</h2>
+            <h2 id="setup-title">Treat Details</h2>
             <div class="form-group">
                 <label>Date</label>
                 <input type="date" id="event-date">
             </div>
             <div class="form-group">
-                <label>Treat By (Host)</label>
+                <label>Treat By (Host) <span style="color:var(--danger)">*</span></label>
                 <select id="event-host"></select>
             </div>
             <div class="form-group">
@@ -306,7 +328,11 @@
                 <div class="count-label">Members Present</div>
             </div>
 
-            <h3 style="margin-bottom: 12px;">Select Present Members</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin:0;">Select Present Members</h3>
+                <button class="btn-small btn-outline" onclick="selectAllSetup()">Select All</button>
+            </div>
+            
             <div class="attendance-wrapper" id="attendance-list">
                 <!-- Checkboxes injected here -->
             </div>
@@ -323,10 +349,10 @@
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                 <button id="btn-bulk-toggle" class="btn-outline" onclick="toggleBulkMode()" style="flex: 1; min-width: 140px;">Enable Bulk Select</button>
                 <button id="btn-select-all" class="btn-outline" onclick="selectAllBulk()" style="display:none; flex: 1; min-width: 120px;">Select All</button>
-                <button id="btn-apply-bulk" class="btn-success" onclick="openBulkFoodModal()" style="display:none; width: 100%;">Apply Food to Selected</button>
+                <button id="btn-apply-bulk" class="btn-success" onclick="openBulkFoodModal()" style="display:none; width: 100%;">Add Food to Selected</button>
             </div>
 
-            <div class="attendance-wrapper" id="food-member-list">
+            <div class="food-assignment-wrapper" id="food-member-list">
                 <!-- Member cards injected here -->
             </div>
             
@@ -335,7 +361,7 @@
                 <button class="btn-primary" onclick="goToSheet3()" style="flex:1;">Proceed to Confirmation →</button>
             </div>
             <div class="abort-row">
-                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Event</button>
+                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Setup</button>
             </div>
         </div>
 
@@ -343,22 +369,16 @@
         <div id="sheet3" class="sheet">
             <h2>Confirmation</h2>
             
-            <div id="receipt-capture" class="receipt-container">
+            <!-- Participant Details Section -->
+            <div id="receipt-participants" class="receipt-container">
                 <div class="receipt-header">
                     <h3 style="justify-content: center; margin-bottom: 5px;">☕ Chaayakkadi Treat</h3>
-                    <div style="color: var(--text-muted); font-size: 0.9rem;" id="receipt-meta">Date • Host • Treat Type</div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;" id="receipt-meta-pax">Date • Host • Treat Type</div>
                 </div>
                 
-                <!-- Individual Details -->
                 <h4 class="receipt-section-title">👥 Participant Details</h4>
-                <div id="receipt-items" style="margin-bottom: 20px;">
+                <div id="receipt-items">
                     <!-- Individual Items injected here -->
-                </div>
-
-                <!-- Vendor Summary -->
-                <h4 class="receipt-section-title">🛒 For Vendor (Summary)</h4>
-                <div id="vendor-items">
-                    <!-- Aggregated Vendor Items injected here -->
                 </div>
                 
                 <div class="receipt-row bold">
@@ -366,10 +386,31 @@
                     <span>₹<span id="receipt-total">0</span></span>
                 </div>
             </div>
+            <button onclick="downloadReceipt('receipt-participants', 'Participants')" class="btn-outline" style="width: 100%; margin-bottom: 24px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download Participant Details
+            </button>
 
-            <button onclick="downloadImage()" class="btn-outline" style="width: 100%; margin-bottom: 24px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                Download PNG Image
+            <!-- Vendor Summary Section -->
+            <div id="receipt-vendor" class="receipt-container">
+                <div class="receipt-header">
+                    <h3 style="justify-content: center; margin-bottom: 5px;">☕ Chaayakkadi Order</h3>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;" id="receipt-meta-vendor">Date • Host</div>
+                </div>
+                
+                <h4 class="receipt-section-title">🛒 For Vendor (Summary)</h4>
+                <div id="vendor-items">
+                    <!-- Aggregated Vendor Items injected here -->
+                </div>
+                
+                <div class="receipt-row bold">
+                    <span>Total Items</span>
+                    <span id="receipt-vendor-total-items">0</span>
+                </div>
+            </div>
+            <button onclick="downloadReceipt('receipt-vendor', 'Vendor')" class="btn-outline" style="width: 100%; margin-bottom: 24px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download Vendor Details
             </button>
             
             <div class="action-row">
@@ -377,7 +418,7 @@
                 <button class="btn-success" onclick="saveEvent()" style="flex:1;">Save Event ✓</button>
             </div>
             <div class="abort-row">
-                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Event</button>
+                <button onclick="abortEvent()" class="btn-danger btn-small">Abort Setup</button>
             </div>
         </div>
 
@@ -430,10 +471,9 @@
                         <tr>
                             <th>Date</th>
                             <th>Host</th>
-                            <th>Treat Type</th>
                             <th>Pax</th>
                             <th>Amount (₹)</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="history-table-body">
@@ -463,6 +503,8 @@
         let isBulkMode = false;
         let bulkSelectedIds = new Set();
         let targetMemberForModal = null; 
+        
+        let editingEventId = null; // Track if we are editing an existing event
 
         // --- Loader Helpers ---
         function showLoader(text) {
@@ -476,17 +518,15 @@
         // Helpers
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            
-            // Format check for dd/mm/yyyy handling safely
             if (dateStr.includes('T')) {
                 const d = new Date(dateStr);
                 return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
             }
-            
             const parts = dateStr.split('-');
             if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
             return dateStr;
         }
+        
         function formatHistoryDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
@@ -570,9 +610,13 @@
         }
 
         function abortEvent() {
-            if(confirm("Are you sure you want to cancel the current event setup? All progress will be lost.")) {
+            if(confirm("Are you sure you want to cancel the current setup? All unsaved progress will be lost.")) {
+                editingEventId = null;
+                document.getElementById('setup-title').innerText = "Treat Details";
+                
                 currentSelectedMembers = [];
                 document.getElementById('event-date').valueAsDate = new Date();
+                document.getElementById('event-host').value = "";
                 document.querySelectorAll('#attendance-list input[type="checkbox"]').forEach(chk => chk.checked = false);
                 updateCount();
                 isBulkMode = false;
@@ -588,10 +632,13 @@
             }
             
             const hostSelect = document.getElementById('event-host');
-            hostSelect.innerHTML = members.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            const currentHost = hostSelect.value;
+            hostSelect.innerHTML = `<option value="" disabled ${!currentHost ? 'selected' : ''}>Select Host</option>` + 
+                members.map(m => `<option value="${m.id}" ${currentHost == m.id ? 'selected' : ''}>${m.name}</option>`).join('');
             
             const typeSelect = document.getElementById('event-type');
-            typeSelect.innerHTML = treatTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+            const currentType = typeSelect.value;
+            typeSelect.innerHTML = treatTypes.map(t => `<option value="${t}" ${currentType == t ? 'selected' : ''}>${t}</option>`).join('');
 
             const listContainer = document.getElementById('attendance-list');
             listContainer.innerHTML = members.map(m => {
@@ -611,12 +658,25 @@
             updateCount();
         }
 
+        function selectAllSetup() {
+            const checkboxes = document.querySelectorAll('#attendance-list input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(c => c.checked);
+            checkboxes.forEach(c => c.checked = !allChecked);
+            updateCount();
+        }
+
         function updateCount() {
             const checked = document.querySelectorAll('#attendance-list input:checked').length;
             document.getElementById('selected-count').innerText = checked;
         }
 
         function goToSheet2() {
+            const hostId = document.getElementById('event-host').value;
+            if (!hostId) {
+                alert("Please select a Host for the treat.");
+                return;
+            }
+
             const checkedBoxes = document.querySelectorAll('#attendance-list input:checked');
             if (checkedBoxes.length === 0) {
                 alert("Please select at least one member to proceed.");
@@ -630,7 +690,7 @@
                 if (existing) {
                     newSelection.push(existing);
                 } else {
-                    newSelection.push({ id: member.id, name: member.name, foodId: null, foodName: null, rate: 0 });
+                    newSelection.push({ id: member.id, name: member.name, foods: [] });
                 }
             });
             currentSelectedMembers = newSelection;
@@ -666,21 +726,47 @@
             const container = document.getElementById('food-member-list');
             container.innerHTML = currentSelectedMembers.map(m => {
                 const isSelected = bulkSelectedIds.has(m.id);
-                const hasFood = m.foodId !== null;
-                const statusColor = hasFood ? 'var(--success)' : 'var(--danger)';
-                const subtext = hasFood ? `${m.foodName} (₹${m.rate})` : 'Touch to assign food';
+                const hasFood = m.foods && m.foods.length > 0;
                 
+                let foodItemsHtml = '';
+                if (hasFood) {
+                    foodItemsHtml = m.foods.map((f, idx) => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-color); padding:5px 8px; margin-top:5px; border-radius:4px; font-size:0.85rem; border:1px solid #e2e8f0;">
+                            <span>${f.name}</span> 
+                            <span>₹${f.rate} <span style="color:var(--danger); cursor:pointer; margin-left:8px; font-weight:bold; font-size:1.1rem; line-height:1;" onclick="event.stopPropagation(); removeFood(${m.id}, ${idx})">×</span></span>
+                        </div>
+                    `).join('');
+                } else if (!isBulkMode) {
+                    foodItemsHtml = `<div style="font-size:0.85rem; color:var(--danger); margin-top:5px;">No food assigned</div>`;
+                }
+
                 return `
                 <div class="member-list-item ${isSelected ? 'selected-bulk' : ''} ${hasFood && !isBulkMode ? 'has-food' : ''}" 
+                     style="flex-direction: column; align-items: stretch;"
                      onclick="handleMemberClick(${m.id})">
-                    ${isBulkMode ? `<input type="checkbox" ${isSelected ? 'checked' : ''}>` : ''}
-                    <div style="flex:1">
-                        <div style="font-weight:600">${m.name}</div>
-                        <div style="font-size:0.8rem; color:${statusColor}">${subtext}</div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            ${isBulkMode ? `<input type="checkbox" ${isSelected ? 'checked' : ''}>` : ''}
+                            <div style="font-weight:600">${m.name}</div>
+                        </div>
+                        ${!isBulkMode ? `<button class="btn-small btn-outline" style="padding: 4px 8px;" onclick="event.stopPropagation(); targetMemberForModal = [${m.id}]; openFoodModal();">+ Add</button>` : ''}
+                    </div>
+                    
+                    <div style="width: 100%;">
+                        ${foodItemsHtml}
                     </div>
                 </div>
                 `;
             }).join('');
+        }
+
+        function removeFood(memberId, foodIndex) {
+            const member = currentSelectedMembers.find(m => m.id === memberId);
+            if (member && member.foods) {
+                member.foods.splice(foodIndex, 1);
+                loadSheet2();
+            }
         }
 
         function toggleBulkMode() {
@@ -704,6 +790,7 @@
                 else bulkSelectedIds.add(id);
                 loadSheet2();
             } else {
+                // If not in bulk mode, clicking the card adds food
                 targetMemberForModal = [id];
                 openFoodModal();
             }
@@ -735,9 +822,11 @@
             document.getElementById('food-modal').style.display = 'flex';
         }
 
-        function closeFoodModal() {
-            document.getElementById('food-modal').style.display = 'none';
-            targetMemberForModal = null;
+        function closeFoodModal(event, forceClose=false) {
+            if(forceClose || event.target.id === 'food-modal') {
+                document.getElementById('food-modal').style.display = 'none';
+                targetMemberForModal = null;
+            }
         }
 
         function applyFood(foodId, foodName, rate) {
@@ -745,9 +834,8 @@
             
             currentSelectedMembers.forEach(m => {
                 if (targetMemberForModal.includes(m.id)) {
-                    m.foodId = foodId;
-                    m.foodName = foodName;
-                    m.rate = rate;
+                    if (!m.foods) m.foods = [];
+                    m.foods.push({ id: foodId, name: foodName, rate: rate });
                 }
             });
             
@@ -756,14 +844,14 @@
                 isBulkMode = false;
             }
             
-            closeFoodModal();
+            closeFoodModal(null, true);
             loadSheet2();
         }
 
         function goToSheet3() {
-            const missing = currentSelectedMembers.filter(m => m.foodId === null);
+            const missing = currentSelectedMembers.filter(m => !m.foods || m.foods.length === 0);
             if (missing.length > 0) {
-                alert(`Please assign food to everyone. Missing: ${missing.map(m=>m.name).join(', ')}`);
+                alert(`Please assign at least one food item to everyone. Missing: ${missing.map(m=>m.name).join(', ')}`);
                 return;
             }
             openTab('sheet3');
@@ -776,54 +864,62 @@
             const hostName = members.find(m => m.id == hostId)?.name || 'Unknown';
             const treatType = document.getElementById('event-type').value;
 
-            document.getElementById('receipt-meta').innerHTML = `${formatHistoryDate(date)} <br> Host: <b>${hostName}</b> <br> Treat: ${treatType}`;
+            document.getElementById('receipt-meta-pax').innerHTML = `${formatHistoryDate(date)} <br> Host: <b>${hostName}</b> <br> Treat: ${treatType}`;
+            document.getElementById('receipt-meta-vendor').innerHTML = `${formatHistoryDate(date)} <br> Order by: <b>${hostName}</b>`;
             
-            let total = 0;
+            let totalAmount = 0;
+            let totalVendorItems = 0;
+            const foodCounts = {};
             
             // Section 1: Individual Participants
             const listContainer = document.getElementById('receipt-items');
             listContainer.innerHTML = currentSelectedMembers.map(m => {
-                total += m.rate;
+                const memberTotal = m.foods.reduce((sum, f) => sum + f.rate, 0);
+                totalAmount += memberTotal;
+                
+                const foodNames = m.foods.map(f => f.name).join(', ');
+                
+                // Aggregate for vendor
+                m.foods.forEach(f => {
+                    totalVendorItems++;
+                    if(foodCounts[f.name]) {
+                        foodCounts[f.name].count += 1;
+                    } else {
+                        foodCounts[f.name] = { count: 1 };
+                    }
+                });
+
                 return `
                 <div class="receipt-row">
-                    <div><b>${m.name}</b> <br><span style="font-size:0.8rem; color:var(--text-muted)">${m.foodName}</span></div>
-                    <div>₹${m.rate}</div>
+                    <div><b>${m.name}</b> <br><span style="font-size:0.8rem; color:var(--text-muted)">${foodNames}</span></div>
+                    <div>₹${memberTotal}</div>
                 </div>
                 `;
             }).join('');
 
-            // Section 2: Vendor Summary Aggregation
-            const foodCounts = {};
-            currentSelectedMembers.forEach(m => {
-                if(foodCounts[m.foodName]) {
-                    foodCounts[m.foodName].count += 1;
-                    foodCounts[m.foodName].totalRate += m.rate;
-                } else {
-                    foodCounts[m.foodName] = { count: 1, rate: m.rate, totalRate: m.rate };
-                }
-            });
-
+            // Section 2: Vendor Summary (No prices, just counts)
             const vendorContainer = document.getElementById('vendor-items');
             vendorContainer.innerHTML = Object.keys(foodCounts).map(foodName => {
                 const item = foodCounts[foodName];
                 return `
                 <div class="receipt-row">
-                    <div><b>${foodName}</b> x ${item.count} <br><span style="font-size:0.8rem; color:var(--text-muted)">₹${item.rate} each</span></div>
-                    <div>₹${item.totalRate}</div>
+                    <div><b>${foodName}</b></div>
+                    <div><b>x ${item.count}</b></div>
                 </div>
                 `;
             }).join('');
             
             document.getElementById('receipt-pax').innerText = currentSelectedMembers.length;
-            document.getElementById('receipt-total').innerText = total;
+            document.getElementById('receipt-total').innerText = totalAmount;
+            document.getElementById('receipt-vendor-total-items').innerText = totalVendorItems;
         }
 
-        function downloadImage() {
-            const captureArea = document.getElementById('receipt-capture');
+        function downloadReceipt(containerId, filePrefix) {
+            const captureArea = document.getElementById(containerId);
             html2canvas(captureArea, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
                 const link = document.createElement('a');
                 const date = document.getElementById('event-date').value;
-                link.download = `Chaayakkadi_Treat_${date}.png`;
+                link.download = `Chaayakkadi_${filePrefix}_${date}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
@@ -834,10 +930,13 @@
             const hostId = document.getElementById('event-host').value;
             const treatType = document.getElementById('event-type').value;
 
-            let totalAmount = currentSelectedMembers.reduce((sum, m) => sum + m.rate, 0);
+            let totalAmount = 0;
+            currentSelectedMembers.forEach(m => {
+                m.foods.forEach(f => totalAmount += f.rate);
+            });
 
             const newEvent = {
-                id: Date.now(),
+                id: editingEventId || Date.now(),
                 date: date,
                 hostId: hostId,
                 hostName: members.find(m => m.id == hostId)?.name || 'Unknown',
@@ -847,27 +946,39 @@
                 totalParticipants: currentSelectedMembers.length
             };
 
-            showLoader("Saving Event to Live DB...");
-            const payload = {
-                action: "saveEvent",
-                data: newEvent
-            };
-
+            showLoader(editingEventId ? "Updating Event in Live DB..." : "Saving Event to Live DB...");
+            
             try {
+                // If editing, delete the old record first to act as an "update" without modifying apps script backend logic
+                if (editingEventId) {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'text/plain'},
+                        body: JSON.stringify({ action: "deleteEvent", data: { id: editingEventId } })
+                    });
+                    events = events.filter(e => e.id !== editingEventId);
+                }
+
+                // Save the event (new or updated)
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {'Content-Type': 'text/plain'}, 
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ action: "saveEvent", data: newEvent })
                 });
                 
                 events.unshift(newEvent); 
+                events.sort((a,b) => b.id - a.id);
                 
-                alert("Event Saved Successfully!");
+                alert(editingEventId ? "Event Updated Successfully!" : "Event Saved Successfully!");
                 
+                // Cleanup and reset
+                editingEventId = null;
+                document.getElementById('setup-title').innerText = "Treat Details";
                 currentSelectedMembers = [];
                 isBulkMode = false;
                 bulkSelectedIds.clear();
                 document.getElementById('event-date').valueAsDate = new Date();
+                document.getElementById('event-host').value = "";
                 
                 openTab('sheet5');
             } catch(e) {
@@ -984,16 +1095,88 @@
             tbody.innerHTML = events.map(e => `
                 <tr>
                     <td>${formatHistoryDate(e.date)}</td>
-                    <td style="font-weight: 500; color: var(--text-main);">${e.hostName}</td>
-                    <td><span style="background: var(--bg-color); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border);">${e.treatType}</span></td>
+                    <td style="font-weight: 500; color: var(--text-main);">${e.hostName} <br><span style="font-size:0.75rem; color:var(--text-muted)">${e.treatType}</span></td>
                     <td>${e.totalParticipants}</td>
                     <td style="color: var(--success); font-weight: 700;">₹${e.totalAmount}</td>
-                    <td><button class="btn-small btn-danger" onclick="deleteEvent(${e.id})">Delete</button></td>
+                    <td>
+                        <div style="display:flex; gap: 5px; flex-wrap:wrap;">
+                            <button class="btn-small" style="background:#0284c7" onclick="viewEvent(${e.id})">View</button>
+                            <button class="btn-small btn-success" onclick="editEventSetup(${e.id})">Edit</button>
+                            <button class="btn-small btn-danger" onclick="deleteEvent(${e.id})">Del</button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
             
             if (events.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: var(--text-muted);">No events saved yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px; color: var(--text-muted);">No events saved yet.</td></tr>`;
+            }
+        }
+        
+        function viewEvent(eventId) {
+            const e = events.find(ev => ev.id === eventId);
+            if(!e) return;
+
+            let html = `<div style="margin-bottom: 15px; background:var(--bg-color); padding:10px; border-radius:var(--radius-sm);">
+                <b>Date:</b> ${formatHistoryDate(e.date)} <br>
+                <b>Host:</b> ${e.hostName} <br>
+                <b>Treat Type:</b> ${e.treatType}
+            </div>`;
+
+            html += `<h4 style="margin:10px 0 5px; border-bottom:1px solid var(--border); padding-bottom:5px;">Participants</h4>`;
+            
+            e.participants.forEach(p => {
+                // Backward compatibility mapping for old records
+                let pFoods = p.foods || [{name: p.foodName, rate: p.rate}];
+                let foodStr = pFoods.map(f => f.name).join(', ');
+                let pTotal = pFoods.reduce((s,f) => s + (f.rate||0), 0);
+                
+                html += `<div style="display:flex; justify-content:space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                    <div><b>${p.name}</b><br><span style="font-size:0.8rem; color:var(--text-muted);">${foodStr}</span></div>
+                    <div>₹${pTotal}</div>
+                </div>`;
+            });
+
+            html += `<div style="display:flex; justify-content:space-between; margin-top:15px; padding-top:10px; border-top:2px solid #ccc; font-size:1.1rem; font-weight:bold;">
+                <span>Total (${e.totalParticipants} Pax)</span>
+                <span>₹${e.totalAmount}</span>
+            </div>`;
+
+            document.getElementById('view-modal-body').innerHTML = html;
+            document.getElementById('view-modal').style.display = 'flex';
+        }
+
+        function closeViewModal(event, forceClose=false) {
+            if(forceClose || event.target.id === 'view-modal') {
+                document.getElementById('view-modal').style.display = 'none';
+            }
+        }
+        
+        function editEventSetup(eventId) {
+            const ev = events.find(e => e.id === eventId);
+            if(!ev) return;
+            
+            if(confirm("Load this event for editing? Any unsaved setup progress will be lost.")) {
+                editingEventId = eventId;
+                document.getElementById('setup-title').innerText = "Edit Treat Details";
+                document.getElementById('event-date').value = ev.date;
+                
+                // Map past participants to new format
+                currentSelectedMembers = ev.participants.map(p => {
+                    return {
+                        id: p.id,
+                        name: p.name,
+                        foods: p.foods ? [...p.foods] : (p.foodId ? [{id: p.foodId, name: p.foodName, rate: p.rate}] : [])
+                    };
+                });
+                
+                openTab('sheet1');
+                
+                // loadSheet1 rebuilds selects, so apply values slightly after
+                setTimeout(() => {
+                    document.getElementById('event-host').value = ev.hostId;
+                    document.getElementById('event-type').value = ev.treatType;
+                }, 10);
             }
         }
 
